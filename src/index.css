@@ -1,5 +1,20 @@
+@font-face {
+  font-family: "UI Sans_v9";
+  src:
+    local("UI Sans_v9"),
+    url("/src/assets/ui-sans-v9-regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "UI Sans_v9 Bold";
+  src:
+    local("UI Sans_v9 Bold"),
+    url("/src/assets/ui-sans-v9-bold.woff2") format("woff2");
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+  font-family: 'UI Sans_v9', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -13,7 +28,11 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
   color: #808893;
   background-color: #FFFFFF;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
 }
