@@ -1,0 +1,28 @@
+const translations: Record<string, string> = {
+  'general.loadingText': 'Loading...',
+  'devices.pageTitle': 'Devices',
+  'devices.form.searchplaceholder': 'Search',
+  'devices.form.noSearchResults': 'No results',
+  'devices.form.filtersListTitle': 'Product line',
+  'devices.form.resetFiltersButtonText': 'Reset',
+  'devices.form.devicesCount': '{{count}} Devices',
+  'devices.form.filterButtonText': 'Filter',
+  'devices.list.columnTitle.productLine': 'Product Line',
+  'devices.list.columnTitle.name': 'Name',
+  'devices.list.loadingError': 'Error loading devices: {{error}}',
+  'devices.list.noResults': 'No results to display',
+  'devices.list.deviceImageAltText': 'Device image',
+  'devices.detail.backButtonTitle': 'Back',
+  'devices.detail.lineNameTitle': 'Product line',
+  'devices.detail.lineIdTitle': 'ID',
+  'devices.detail.nameTitle': 'Name',
+  'devices.detail.skuTitle': 'SKU',
+  'devices.detail.maxPowerTitle': 'Max Power',
+  'devices.detail.speedTitle': 'Speed',
+  'devices.detail.numberOfPortsTitle': 'Number of Ports',
+  'devices.detail.showJsonButtonText': 'See all details as JSON',
+  'devices.detail.hideJsonButtonText': 'Hide all details as JSON',
+  'devices.detail.deviceImageAltText': 'Device image',
+};
+
+export default translations;
