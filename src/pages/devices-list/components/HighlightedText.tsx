@@ -1,5 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { Fragment } from 'react/jsx-runtime';
+import { shim } from 'regexp.escape';
+const regexpEscape = shim();
 
 interface HighlightedTextProps {
   text: string;
@@ -7,17 +9,14 @@ interface HighlightedTextProps {
   MatchComponent: React.ComponentType<PropsWithChildren<{ key?: string }>>;
 }
 
-// const regexCache: Record<string, RegExp> = {};
-
 export const HighlightedText: React.FC<HighlightedTextProps> = ({ text, query, MatchComponent }) => {
   if (!query || !text) {
     return <>{text}</>;
   }
 
   // Escape special regex characters in the query and create a case-insensitive regex
-  // const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // const regex = regexCache[query] ||
-  const regex = new RegExp(`(${query})`, 'gi');
+  const escapedQuery = regexpEscape(query);
+  const regex = new RegExp(`(${escapedQuery})`, 'gi');
 
   // Split the text into parts based on the regex matches
   const parts = text.split(regex);

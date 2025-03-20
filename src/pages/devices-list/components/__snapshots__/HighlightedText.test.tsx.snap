@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HighlightedText > renders with adjacent matches 1`] = `
+[
+  <span
+    data-testid="E"
+  >
+    a 
+    <span>
+      foo
+    </span>
+    <span>
+      foo
+    </span>
+  </span>,
+]
+`;
+
+exports[`HighlightedText > renders with full match 1`] = `
+[
+  <span
+    data-testid="B"
+  >
+    <span>
+      foo
+    </span>
+  </span>,
+]
+`;
+
+exports[`HighlightedText > renders with matches containing regex characters 1`] = `
+[
+  <span
+    data-testid="F"
+  >
+    a 
+    <span>
+      f$o\\[o
+    </span>
+  </span>,
+]
+`;
+
+exports[`HighlightedText > renders with multiple matches 1`] = `
+[
+  <span
+    data-testid="D"
+  >
+    a 
+    <span>
+      foo
+    </span>
+     b 
+    <span>
+      foo
+    </span>
+  </span>,
+]
+`;
+
+exports[`HighlightedText > renders with no match 1`] = `
+[
+  <span
+    data-testid="A"
+  >
+    foo
+  </span>,
+]
+`;
+
+exports[`HighlightedText > renders with partial match 1`] = `
+[
+  <span
+    data-testid="C"
+  >
+    a 
+    <span>
+      foo
+    </span>
+     b
+  </span>,
+]
+`;
+
+exports[`HighlightedText > renders with partial match in word 1`] = `
+[
+  <span
+    data-testid="C"
+  >
+    a
+    <span>
+      foo
+    </span>
+    b
+  </span>,
+]
+`;
