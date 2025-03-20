@@ -7,6 +7,8 @@ interface HighlightedTextProps {
   MatchComponent: React.ComponentType<PropsWithChildren<{ key?: string }>>;
 }
 
+// const regexCache: Record<string, RegExp> = {};
+
 export const HighlightedText: React.FC<HighlightedTextProps> = ({ text, query, MatchComponent }) => {
   if (!query || !text) {
     return <>{text}</>;
@@ -14,6 +16,7 @@ export const HighlightedText: React.FC<HighlightedTextProps> = ({ text, query, M
 
   // Escape special regex characters in the query and create a case-insensitive regex
   // const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // const regex = regexCache[query] ||
   const regex = new RegExp(`(${query})`, 'gi');
 
   // Split the text into parts based on the regex matches

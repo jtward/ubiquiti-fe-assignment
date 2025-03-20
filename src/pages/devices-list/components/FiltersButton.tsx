@@ -52,19 +52,39 @@ const ToggleButton = styled.div`
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 8px 24px rgba(0, 0, 0, 0.08);
 `;
 
-const Popover = styled.div<{ $isOpen?: boolean }>`
+const PopoverWrapper = styled.div<{ $isVisible?: boolean }>`
   position: absolute;
   right: 0;
-  display: ${props => props.$isOpen ? 'flex' : 'none'};
+  height: 0;
+  z-index: 10;
+  clip-path: rect(0px 0px 0px 0px);
+
+  ${props => props.$isVisible && `
+    height: fit-content;
+    clip-path: rect(0px 1000px 1000px -1000px);
+  `}
+`;
+
+const Popover = styled.div<{ $isOpen?: boolean }>`
+  display: block;
   flex-direction: column;
   gap: 16px;
-  z-index: 10;
   margin: 1px 0 0 0;
   padding: 16px;
   overflow-y: auto;
   border-radius: 8px;
   background-color: ${POPOVER_BACKGROUND_COLOR};
   box-shadow: 0 16px 32px 0 ${POPOVER_SHADOW_COLOR};
+
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+
+  ${props => props.$isOpen ? `
+    opacity: 1;
+    transform: translateY(0);
+  ` : `
+    opacity: 0;
+    transform: translateY(-100%);
+  `}
 `;
 
 const Label = styled.label`
@@ -213,6 +233,22 @@ export const FiltersButton = () => {
     e.preventDefault();
   };
 
+  // isMenuVisible tracks whether the menu is visible at all, including when
+  // animating. Its value is set to true when isOpen becomes true, and false
+  // when the transition ends.
+  // This allows us to block content beneath only when isMenuVisible is true
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const handleTransitionEnd = () => {
+    if (!isOpen) {
+      setIsMenuVisible(false);
+    }
+  };
+  useEffect(() => {
+    if (isOpen) {
+      setIsMenuVisible(true);
+    }
+  }, [isOpen]);
+
   return (
     <Wrapper>
       <InputWrapper>
@@ -222,42 +258,44 @@ export const FiltersButton = () => {
           <span>{t('devices.form.filterButtonText')}</span>
         </ToggleButton>
       </InputWrapper>
-      <Popover $isOpen={isOpen} {...getMenuProps()}>
-        <Label {...getLabelProps()}>{t('devices.form.filtersListTitle')}</Label>
-        {isOpen && (
-          <>
-            <List tabIndex={-1}>
-              {productLines.map((item, index) => {
-                return (
-                  <ListItem
-                    key={item.id}
-                    $isHighlighted={highlightedIndex === index}
-                    $isSelected={selectedItems.includes(item)}
-                    {...getItemProps({
-                      item,
-                      index,
-                      'aria-selected': selectedItems.includes(item),
-                    })}
-                  >
-                    <VisualCheckbox
-                      checked={selectedItems.includes(item)}
-                    />
-                    {item.name}
-                  </ListItem>
-                );
-              })
-              }
-            </List>
-            <ResetButton
-              type="button"
-              onClick={handleReset}
-              disabled={selectedItems.length === 0}
-            >
-              {t('devices.form.resetFiltersButtonText')}
-            </ResetButton>
-          </>
-        )}
-      </Popover>
+      <PopoverWrapper $isVisible={isMenuVisible}>
+        <Popover $isOpen={isOpen} {...getMenuProps()} onTransitionEnd={handleTransitionEnd}>
+          <Label {...getLabelProps()}>{t('devices.form.filtersListTitle')}</Label>
+          {isOpen && (
+            <>
+              <List tabIndex={-1}>
+                {productLines.map((item, index) => {
+                  return (
+                    <ListItem
+                      key={item.id}
+                      $isHighlighted={highlightedIndex === index}
+                      $isSelected={selectedItems.includes(item)}
+                      {...getItemProps({
+                        item,
+                        index,
+                        'aria-selected': selectedItems.includes(item),
+                      })}
+                    >
+                      <VisualCheckbox
+                        checked={selectedItems.includes(item)}
+                      />
+                      {item.name}
+                    </ListItem>
+                  );
+                })
+                }
+              </List>
+              <ResetButton
+                type="button"
+                onClick={handleReset}
+                disabled={selectedItems.length === 0}
+              >
+                {t('devices.form.resetFiltersButtonText')}
+              </ResetButton>
+            </>
+          )}
+        </Popover>
+      </PopoverWrapper>
     </Wrapper>
   );
 };

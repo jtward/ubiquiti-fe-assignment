@@ -1,7 +1,7 @@
 import { useCombobox } from 'downshift';
 import { Device } from '../../../data-hooks/useDevicesQuery';
-import { use } from 'react';
 import { LocalizationContext } from '../../../localization/LocalizationContext';
+import { use, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SearchIcon } from '../../../icons/SearchIcon';
 import { DeviceSearchContext } from '../contexts/DeviceSearchContext';
@@ -53,10 +53,21 @@ const StyledSearchIcon = styled(SearchIcon)`
   color: ${TEXT_INPUT_PLACEHOLDER_COLOR};
 `;
 
-const List = styled.ul<{ $isOpen?: boolean }>`
+const ListWrapper = styled.div<{ $isVisible?: boolean }>`
   position: absolute;
-  display: ${props => props.$isOpen ? 'block' : 'none'};
+  width: 100%;
+  height: fit-content;
   z-index: 10;
+  clip-path: rect(0px 0px 0px 0px);
+  will-change: clip-path;
+
+  ${props => props.$isVisible && `
+    clip-path: rect(0px 1000px 1000px -1000px);
+  `}
+`;
+
+const List = styled.ul<{ $isOpen?: boolean }>`
+  display: block;
   margin: 1px 0 0 0;
   padding: 8px 0;
   list-style: none;
@@ -65,7 +76,19 @@ const List = styled.ul<{ $isOpen?: boolean }>`
   overflow-y: auto;
   background-color: ${POPOVER_BACKGROUND_COLOR};
   border-radius: 8px;
+
   box-shadow: 0 16px 32px 0 ${POPOVER_SHADOW_COLOR};
+  
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+  will-change: opacity, transform;
+
+  ${props => props.$isOpen ? `
+    opacity: 1;
+    transform: translateY(0);
+  ` : `
+    opacity: 0;
+    transform: translateY(-100%);
+  `}
 `;
 
 const ListItem = styled.li``;
@@ -153,6 +176,24 @@ export const SearchInput = () => {
     initialInputValue: search,
   });
 
+  const menuProps = getMenuProps();
+
+  // isMenuVisible tracks whether the menu is visible at all, including when
+  // animating. Its value is set to true when isOpen becomes true, and false
+  // when the transition ends.
+  // This allows us to block content beneath only when isMenuVisible is true
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const handleTransitionEnd = () => {
+    if (!isOpen) {
+      setIsMenuVisible(false);
+    }
+  };
+  useEffect(() => {
+    if (isOpen) {
+      setIsMenuVisible(true);
+    }
+  }, [isOpen]);
+
   return (
     <Wrapper>
       <InputWrapper>
@@ -162,12 +203,12 @@ export const SearchInput = () => {
         />
         <StyledSearchIcon />
       </InputWrapper>
-      <List {...getMenuProps()} $isOpen={isOpen}>
-        {isOpen && autocompleteDevices.length === 0 && (
-          <NoResultsListItem>{t('devices.form.noSearchResults')}</NoResultsListItem>
-        )}
-        {isOpen &&
-          autocompleteDevices.map((device, index) => (
+      <ListWrapper $isVisible={isOpen || isMenuVisible}>
+        <List {...menuProps} $isOpen={isOpen} onTransitionEnd={handleTransitionEnd}>
+          {autocompleteDevices.length === 0 && (
+            <NoResultsListItem>{t('devices.form.noSearchResults')}</NoResultsListItem>
+          )}
+          {autocompleteDevices.map((device, index) => (
             <ListItem
               key={device.id}
               {...getItemProps({item: device, index})}
@@ -193,7 +234,8 @@ export const SearchInput = () => {
               </ListItemNavLink>
             </ListItem>
           ))}
-      </List>
+        </List>
+      </ListWrapper>
     </Wrapper>
   );
 };
