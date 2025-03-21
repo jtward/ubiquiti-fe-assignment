@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import UIDB from './uidb.json';
+import UIDB from './UIDB';
 
 export interface DeviceLine {
   id: string;
